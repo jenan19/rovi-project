@@ -15,7 +15,10 @@
 	<Include file="UR5/UR-6-85-5-A/Device.wc.xml" />
 
 	<!--insert gripper definition-->
-
+	<Frame name="ToolMount" refframe="UR-6-85-5-A.TCP">
+  	  <RPY>0 0 0</RPY> <Pos> 0 0 0.0719 </Pos>
+	</Frame>
+  <Include file="wsg50/wsg50.xml"/>
 
 
 	<Frame name="GraspTCP" refframe="UR-6-85-5-A.TCP" type="Fixed">
