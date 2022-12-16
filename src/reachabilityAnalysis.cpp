@@ -6,6 +6,16 @@
 #include <iostream>
 #include <string>
 
+#include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
+
+#include "reachabilityAnalyzer.hpp"
+
+
+
 using namespace rw::kinematics;
 using namespace rw::math;
 
@@ -83,10 +93,7 @@ std::vector< Q > reachabilityAnalysis(rw::models::WorkCell::Ptr wc, rw::models::
     if (gripper.isNull ()) {
         RW_THROW ("COULD not find device gripper ... check model");
     }
-    Q defaultQ = gripper->getQ(state);
-    Q openQ = defaultQ;
-    openQ[0] = 0.045;
-    gripper->setQ(openQ, state);
+    
 
     for (double rollAngle = 0; rollAngle < 360.0;
          rollAngle += 1.0) {    // for every degree around the roll axis
@@ -96,7 +103,7 @@ std::vector< Q > reachabilityAnalysis(rw::models::WorkCell::Ptr wc, rw::models::
                                state);
 
         std::vector< Q > solutions =
-            getConfigurations ("GraspTargetCylinder", "GraspTCP", robot, wc, state);
+            getConfigurations ("GraspTargetCylinder", "WSG50.TCP", robot, wc, state);
         for (unsigned int i = 0; i < solutions.size (); i++) {
             // set the robot in that configuration and check if it is in collision
             robot->setQ (solutions[i], state);
@@ -124,7 +131,22 @@ std::vector< Q > reachabilityAnalysis(rw::models::WorkCell::Ptr wc, rw::models::
 }
 
 
+void progressbar(float progress) // dies with OpenCV for some reason...
+{
 
+    int barWidth = 70;
+
+    std::cout << "[";
+    int pos = barWidth * progress;
+    for (int i = 0; i < barWidth; ++i) {
+        if (i < pos) std::cout << "=";
+        else if (i == pos) std::cout << ">";
+        else std::cout << " ";
+    }
+    std::cout << "] " << int(progress * 100.0) << " %\r";
+    std::cout.flush();
+
+}
 
 
 
@@ -132,11 +154,211 @@ std::vector< Q > reachabilityAnalysis(rw::models::WorkCell::Ptr wc, rw::models::
 
 int main (int argc, char** argv)
 {
+    
+    std::cout << "init... \n";
+     // load workcell
+    rw::models::WorkCell::Ptr wc =
+    rw::loaders::WorkCellLoader::Factory::load ("../WorkCell/Scene.wc.xml");
+    
+
+    // find relevant frames
+    MovableFrame::Ptr cylinderFrame = wc->findFrame< MovableFrame > ("Cylinder");
+    
+
+    rw::models::SerialDevice::Ptr robotUR5 = wc->findDevice< rw::models::SerialDevice > ("UR-6-85-5-A");
+    
+
+
+    MovableFrame::Ptr URReferenceFrame = wc->findFrame< MovableFrame > ("URReference");
+
+    rw::models::Device::Ptr gripper = wc->findDevice("WSG50");
+
+    State state = wc->getDefaultState();
+
+    Q gripperQ(1);
+    gripperQ[0] = 0.055;
+    gripper->setQ(gripperQ, state);
+
+    
+    int resX = 4;
+    int resY = 4;
+
+    
+    int tableWidth_mm = 800;
+    int tableDebth_mm = 800;
+
+
+    int stepSizeX = tableWidth_mm / resX;
+    int stepSizeY = tableDebth_mm / resY;
+
+    cv::Mat img (cv::Size(resX,resY),CV_8UC1);
+
+    rw::trajectory::TimedStatePath tStatePath;
+    
+    float score = 0;
+    float maxScore = -1;
+    float reachAnlalysis [resX][resY];
+
+
+    float progress = 0;
+    double time = 0;
+    Reachability reacher = Reachability(robotUR5,wc,cylinderFrame);
+
+    float percentageChange = 1/(tableDebth_mm * tableWidth_mm);
+
+    for(int i = 0; i < resY + 1; i++)
+    {
+        float y = (i * stepSizeY - tableDebth_mm / 2.0f ) / 1000.0f; // calculate y and convert to meters
+        for(int j = 0; j < resX + 1; j++)
+        {
+            float x = (j * stepSizeX - tableWidth_mm / 2.0f) / 1000.0f; // calculate x and convert to meters
+            std::cout << x << "   " << y << '\n';
+            //progressbar(progress);
+            //state = wc->getDefaultState();
+
+            Vector3D<> pos(x, y, 0.11);
+            
+            Transform3D<> transform(pos);
+
+            URReferenceFrame->setTransform(transform, state);
+
+            std::vector< Q > collisionFreeSolutions = reacher.reachabilityAnalysis(state);
+
+            score = collisionFreeSolutions.size();
+
+            //std::vector< Q > collisionFreeSolutions = reachabilityAnalysis(wc,robotUR5,cylinderFrame);
+
+
+            if(score > maxScore)
+            {
+                maxScore = score;
+            }
+            reachAnlalysis[i][j] = score;
+            
+            progress += percentageChange;
+            for (unsigned int i = 0; i < collisionFreeSolutions.size (); i++) 
+            {
+                robotUR5->setQ (collisionFreeSolutions[i], state);
+                tStatePath.push_back (rw::trajectory::TimedState (time, state));
+                time += 0.01;
+            }
+
+        }
+    }
+
+
+
+
+      for(int i = 0; i < resY; i++)
+    {
+        for(int j = 0; j < resX; j++)
+        {
+            int col = ((float)(reachAnlalysis[i][j] / maxScore) * 255);
+
+            std::cout << "(" << reachAnlalysis[i][j] << ", " << col << ")  ";
+            img.at<uchar>(cv::Point(j,i)) = col;
+
+        }
+        std::cout << '\n';
+    }
+
+    if(tStatePath.size())
+        rw::loaders::PathLoader::storeTimedStatePath (*wc, tStatePath, "../WorkCell/visu.rwplay");
+    else
+        std::cout << "no solutions";
+
+    std::cout << "\n DONE \n";
+
+    
+    cv::namedWindow("heatmap",cv::WINDOW_NORMAL);
+    cv::Mat colorImg;
+    
+    cv::applyColorMap(img,colorImg,cv::COLORMAP_JET);
+    cv::imshow("heatmap",colorImg);
+    cv::waitKey(0);
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+    Reachability reacher = Reachability(robotUR5,wc,cylinderFrame);
+    
+    
+    
+    std::cout << "testing... \n";
+
+    std::vector< Q > collisionFreeSolutions = reacher.reachabilityAnalysis();
+
+    std::cout << "Current position of the robot vs object to be grasped has: "
+              << collisionFreeSolutions.size () << " collision-free inverse kinematics solutions!"
+              << std::endl;*/
+
+    
+
+
+
+    /*
+    wc = rw::loaders::WorkCellLoader::Factory::load ("../WorkCell/Scene.wc.xml");
+
+    State state = wc->getDefaultState();
+    // visualize them
+    rw::trajectory::TimedStatePath tStatePath;
+    double time = 0;
+    for (unsigned int i = 0; i < collisionFreeSolutions.size (); i++) {
+        robotUR5->setQ (collisionFreeSolutions[i], state);
+        tStatePath.push_back (rw::trajectory::TimedState (time, state));
+        time += 0.01;
+    }
+
+    if(tStatePath.size())
+        rw::loaders::PathLoader::storeTimedStatePath (*wc, tStatePath, "../WorkCell/visu.rwplay");
+    
+
+
+
+    collisionFreeSolutions = reachabilityAnalysis(wc,robotUR5,cylinderFrame);
+
+
+
+    std::cout << "Current position of the robot vs object to be grasped has: "
+              << collisionFreeSolutions.size () << " collision-free inverse kinematics solutions!"
+              << std::endl;
+
+
+    state = wc->getDefaultState();
+    // visualize them
+    tStatePath.clear();
+    time = 0;
+    for (unsigned int i = 0; i < collisionFreeSolutions.size (); i++) {
+        robotUR5->setQ (collisionFreeSolutions[i], state);
+        tStatePath.push_back (rw::trajectory::TimedState (time, state));
+        time += 0.01;
+    }
+
+    if(tStatePath.size())
+        rw::loaders::PathLoader::storeTimedStatePath (*wc, tStatePath, "../WorkCell/visuOld.rwplay");
+
+
+*/
+
+
+
+
+/*
     // load workcell
     rw::models::WorkCell::Ptr wc =
         rw::loaders::WorkCellLoader::Factory::load ("../WorkCell/Scene.wc.xml");
@@ -176,14 +398,16 @@ std::vector< Q > collisionFreeSolutions = reachabilityAnalysis(wc,robotUR5,cylin
 
 std::cout << "Current position of the robot vs object to be grasped has: "
               << collisionFreeSolutions.size () << " collision-free inverse kinematics solutions!"
-              << std::endl;
+              << std::endl;*/
     
-/*
 
+    /*
     // create Collision Detector
     rw::proximity::CollisionDetector detector (
         wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeDefaultCollisionStrategy ());
 
+    
+    
     // get the default state
     State state = wc->getDefaultState ();
     std::vector< Q > collisionFreeSolutions;
@@ -222,7 +446,7 @@ std::cout << "Current position of the robot vs object to be grasped has: "
         time += 0.01;
     }
 
-    rw::loaders::PathLoader::storeTimedStatePath (*wc, tStatePath, "../scene/visu.rwplay");
-*/
+    rw::loaders::PathLoader::storeTimedStatePath (*wc, tStatePath, "../scene/visu.rwplay");*/
+
     return 0;
 }
