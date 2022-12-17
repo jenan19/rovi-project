@@ -5,7 +5,12 @@ import open3d as o3d
 import random as rand
 import copy
 
+mesh = o3d.io.read_triangle_mesh("WorkCell/parts/cylinder.stl")
+pointcloud = mesh.sample_points_poisson_disk(100000)
 
+# you can plot and check
+o3d.visualization.draw_geometries([mesh])
+o3d.visualization.draw_geometries([pointcloud])
 
 
 ## init models
