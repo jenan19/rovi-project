@@ -6,7 +6,7 @@ import random as rand
 import copy
 
 mesh = o3d.io.read_triangle_mesh("WorkCell/parts/cylinder.stl")
-pointcloud = mesh.sample_points_poisson_disk(100000)
+pointcloud = mesh.sample_points_poisson_disk(10000)
 
 # you can plot and check
 o3d.visualization.draw_geometries([mesh])
@@ -14,9 +14,12 @@ o3d.visualization.draw_geometries([pointcloud])
 
 
 ## init models
-scene = o3d.io.read_point_cloud("PointClouds/scene.pcd")
-obj_local = o3d.io.read_point_cloud("PointClouds/object-local.pcd")
-obj_global = o3d.io.read_point_cloud("PointClouds/object-global.pcd")
+scene = o3d.io.read_point_cloud("PointClouds/Scanner25D.pcd")
+##obj_local = o3d.io.read_point_cloud("PointClouds/object-local.pcd")
+obj_global = pointcloud; #= o3d.io.read_point_cloud("PointClouds/object-global.pcd")
+
+
+
 
 ## init random number generator
 rand.seed()
