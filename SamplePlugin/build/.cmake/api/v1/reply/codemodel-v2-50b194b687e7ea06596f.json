@@ -1,0 +1,105 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "RoViPlugin",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "RoViPlugin::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-RoViPlugin-Debug-317d454e2780524486fd.json",
+					"name" : "RoViPlugin",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "RoViPlugin_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-RoViPlugin_autogen-Debug-dc21667d89a09b1f3b4c.json",
+					"name" : "RoViPlugin_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "hsvfilter::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-hsvfilter-Debug-a9f652893bbd69321d13.json",
+					"name" : "hsvfilter",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "hsvfilter_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-hsvfilter_autogen-Debug-2ac81f90acfdbfa490f7.json",
+					"name" : "hsvfilter_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "planning::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-planning-Debug-0d75a21f8ee1955d1ba4.json",
+					"name" : "planning",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "planning_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-planning_autogen-Debug-941a6c9c5ad0f8213780.json",
+					"name" : "planning_autogen",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/peterhye/roviexercises/RoViProject/SamplePlugin/build",
+		"source" : "/home/peterhye/roviexercises/RoViProject/SamplePlugin"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

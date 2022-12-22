@@ -1,0 +1,8 @@
+/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles/hsvfilter.dir
+/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles/planning.dir
+/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles/RoViPlugin.dir
+/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles/edit_cache.dir
+/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles/rebuild_cache.dir
+/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles/hsvfilter_autogen.dir
+/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles/planning_autogen.dir
+/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles/RoViPlugin_autogen.dir
