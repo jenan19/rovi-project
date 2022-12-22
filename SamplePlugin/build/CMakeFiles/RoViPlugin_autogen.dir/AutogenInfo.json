@@ -761,7 +761,7 @@
 	"MOC_SKIP" : 
 	[
 		"/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/hsvfilter_autogen/mocs_compilation.cpp",
-		"/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/planning_autogen/mocs_compilation.cpp"
+		"/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/stereo_autogen/mocs_compilation.cpp"
 	],
 	"MULTI_CONFIG" : false,
 	"PARALLEL" : 8,
@@ -784,7 +784,7 @@
 	"UIC_SKIP" : 
 	[
 		"/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/hsvfilter_autogen/mocs_compilation.cpp",
-		"/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/planning_autogen/mocs_compilation.cpp"
+		"/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/stereo_autogen/mocs_compilation.cpp"
 	],
 	"UIC_UI_FILES" : [],
 	"VERBOSITY" : 0

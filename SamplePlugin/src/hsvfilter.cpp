@@ -15,14 +15,14 @@ using namespace cv;
 const int max_value_H = 360/2;
 const int max_value = 255;
 
-int low_H = 50, low_S = 50, low_V = 50;
-int high_H = 50, high_S = 50, high_V = 50;
+int low_H = 0, low_S = 0, low_V = 30;
+int high_H = 200, high_S = 0, high_V = 200;
 
 
 
 int main(int argc, char* argv[])
 {
-    Mat img = imread("ImageLeft.ppm");
+    Mat img = imread("../pictures/020474Camera_Right.png");
     imshow("image", img);
     imshow("Trackbars", 0);
     // Trackbars to set thresholds for HSV values

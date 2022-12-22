@@ -130,17 +130,17 @@ hsvfilter/fast:
 .PHONY : hsvfilter/fast
 
 #=============================================================================
-# Target rules for targets named planning
+# Target rules for targets named stereo
 
 # Build rule for target.
-planning: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 planning
-.PHONY : planning
+stereo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 stereo
+.PHONY : stereo
 
 # fast build rule for target.
-planning/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/planning.dir/build.make CMakeFiles/planning.dir/build
-.PHONY : planning/fast
+stereo/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stereo.dir/build.make CMakeFiles/stereo.dir/build
+.PHONY : stereo/fast
 
 #=============================================================================
 # Target rules for targets named RoViPlugin
@@ -169,17 +169,17 @@ hsvfilter_autogen/fast:
 .PHONY : hsvfilter_autogen/fast
 
 #=============================================================================
-# Target rules for targets named planning_autogen
+# Target rules for targets named stereo_autogen
 
 # Build rule for target.
-planning_autogen: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 planning_autogen
-.PHONY : planning_autogen
+stereo_autogen: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 stereo_autogen
+.PHONY : stereo_autogen
 
 # fast build rule for target.
-planning_autogen/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/planning_autogen.dir/build.make CMakeFiles/planning_autogen.dir/build
-.PHONY : planning_autogen/fast
+stereo_autogen/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stereo_autogen.dir/build.make CMakeFiles/stereo_autogen.dir/build
+.PHONY : stereo_autogen/fast
 
 #=============================================================================
 # Target rules for targets named RoViPlugin_autogen
@@ -266,30 +266,6 @@ hsvfilter_autogen/mocs_compilation.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/hsvfilter.dir/build.make CMakeFiles/hsvfilter.dir/hsvfilter_autogen/mocs_compilation.cpp.s
 .PHONY : hsvfilter_autogen/mocs_compilation.cpp.s
 
-planning_autogen/mocs_compilation.o: planning_autogen/mocs_compilation.cpp.o
-.PHONY : planning_autogen/mocs_compilation.o
-
-# target to build an object file
-planning_autogen/mocs_compilation.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/planning.dir/build.make CMakeFiles/planning.dir/planning_autogen/mocs_compilation.cpp.o
-.PHONY : planning_autogen/mocs_compilation.cpp.o
-
-planning_autogen/mocs_compilation.i: planning_autogen/mocs_compilation.cpp.i
-.PHONY : planning_autogen/mocs_compilation.i
-
-# target to preprocess a source file
-planning_autogen/mocs_compilation.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/planning.dir/build.make CMakeFiles/planning.dir/planning_autogen/mocs_compilation.cpp.i
-.PHONY : planning_autogen/mocs_compilation.cpp.i
-
-planning_autogen/mocs_compilation.s: planning_autogen/mocs_compilation.cpp.s
-.PHONY : planning_autogen/mocs_compilation.s
-
-# target to generate assembly for a file
-planning_autogen/mocs_compilation.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/planning.dir/build.make CMakeFiles/planning.dir/planning_autogen/mocs_compilation.cpp.s
-.PHONY : planning_autogen/mocs_compilation.cpp.s
-
 src/SamplePlugin.o: src/SamplePlugin.cpp.o
 .PHONY : src/SamplePlugin.o
 
@@ -338,29 +314,53 @@ src/hsvfilter.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/hsvfilter.dir/build.make CMakeFiles/hsvfilter.dir/src/hsvfilter.cpp.s
 .PHONY : src/hsvfilter.cpp.s
 
-src/planning.o: src/planning.cpp.o
-.PHONY : src/planning.o
+src/stereo.o: src/stereo.cpp.o
+.PHONY : src/stereo.o
 
 # target to build an object file
-src/planning.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/planning.dir/build.make CMakeFiles/planning.dir/src/planning.cpp.o
-.PHONY : src/planning.cpp.o
+src/stereo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stereo.dir/build.make CMakeFiles/stereo.dir/src/stereo.cpp.o
+.PHONY : src/stereo.cpp.o
 
-src/planning.i: src/planning.cpp.i
-.PHONY : src/planning.i
+src/stereo.i: src/stereo.cpp.i
+.PHONY : src/stereo.i
 
 # target to preprocess a source file
-src/planning.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/planning.dir/build.make CMakeFiles/planning.dir/src/planning.cpp.i
-.PHONY : src/planning.cpp.i
+src/stereo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stereo.dir/build.make CMakeFiles/stereo.dir/src/stereo.cpp.i
+.PHONY : src/stereo.cpp.i
 
-src/planning.s: src/planning.cpp.s
-.PHONY : src/planning.s
+src/stereo.s: src/stereo.cpp.s
+.PHONY : src/stereo.s
 
 # target to generate assembly for a file
-src/planning.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/planning.dir/build.make CMakeFiles/planning.dir/src/planning.cpp.s
-.PHONY : src/planning.cpp.s
+src/stereo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stereo.dir/build.make CMakeFiles/stereo.dir/src/stereo.cpp.s
+.PHONY : src/stereo.cpp.s
+
+stereo_autogen/mocs_compilation.o: stereo_autogen/mocs_compilation.cpp.o
+.PHONY : stereo_autogen/mocs_compilation.o
+
+# target to build an object file
+stereo_autogen/mocs_compilation.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stereo.dir/build.make CMakeFiles/stereo.dir/stereo_autogen/mocs_compilation.cpp.o
+.PHONY : stereo_autogen/mocs_compilation.cpp.o
+
+stereo_autogen/mocs_compilation.i: stereo_autogen/mocs_compilation.cpp.i
+.PHONY : stereo_autogen/mocs_compilation.i
+
+# target to preprocess a source file
+stereo_autogen/mocs_compilation.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stereo.dir/build.make CMakeFiles/stereo.dir/stereo_autogen/mocs_compilation.cpp.i
+.PHONY : stereo_autogen/mocs_compilation.cpp.i
+
+stereo_autogen/mocs_compilation.s: stereo_autogen/mocs_compilation.cpp.s
+.PHONY : stereo_autogen/mocs_compilation.s
+
+# target to generate assembly for a file
+stereo_autogen/mocs_compilation.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stereo.dir/build.make CMakeFiles/stereo.dir/stereo_autogen/mocs_compilation.cpp.s
+.PHONY : stereo_autogen/mocs_compilation.cpp.s
 
 # Help Target
 help:
@@ -372,10 +372,10 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... RoViPlugin_autogen"
 	@echo "... hsvfilter_autogen"
-	@echo "... planning_autogen"
+	@echo "... stereo_autogen"
 	@echo "... RoViPlugin"
 	@echo "... hsvfilter"
-	@echo "... planning"
+	@echo "... stereo"
 	@echo "... RoViPlugin_autogen/UVLADIE3JM/qrc_resources.o"
 	@echo "... RoViPlugin_autogen/UVLADIE3JM/qrc_resources.i"
 	@echo "... RoViPlugin_autogen/UVLADIE3JM/qrc_resources.s"
@@ -385,18 +385,18 @@ help:
 	@echo "... hsvfilter_autogen/mocs_compilation.o"
 	@echo "... hsvfilter_autogen/mocs_compilation.i"
 	@echo "... hsvfilter_autogen/mocs_compilation.s"
-	@echo "... planning_autogen/mocs_compilation.o"
-	@echo "... planning_autogen/mocs_compilation.i"
-	@echo "... planning_autogen/mocs_compilation.s"
 	@echo "... src/SamplePlugin.o"
 	@echo "... src/SamplePlugin.i"
 	@echo "... src/SamplePlugin.s"
 	@echo "... src/hsvfilter.o"
 	@echo "... src/hsvfilter.i"
 	@echo "... src/hsvfilter.s"
-	@echo "... src/planning.o"
-	@echo "... src/planning.i"
-	@echo "... src/planning.s"
+	@echo "... src/stereo.o"
+	@echo "... src/stereo.i"
+	@echo "... src/stereo.s"
+	@echo "... stereo_autogen/mocs_compilation.o"
+	@echo "... stereo_autogen/mocs_compilation.i"
+	@echo "... stereo_autogen/mocs_compilation.s"
 .PHONY : help
 
 

@@ -82,7 +82,6 @@
 #define __WCHAR_MIN__ (-__WCHAR_MAX__ - 1)
 #define __INT64_C(c) c ## L
 #define __GCC_ATOMIC_POINTER_LOCK_FREE 2
-#define stereo_EXPORTS 1
 #define __FLT32X_MANT_DIG__ 53
 #define __GCC_ATOMIC_CHAR16_T_LOCK_FREE 2
 #define __cpp_aligned_new 201606L
@@ -112,6 +111,7 @@
 #define __STDC_IEC_559__ 1
 #define __STDC_ISO_10646__ 201706L
 #define __UINT16_C(c) c
+#define QT_CHARTS_LIB 1
 #define __DECIMAL_DIG__ 21
 #define __STDC_IEC_559_COMPLEX__ 1
 #define __FLT64_EPSILON__ 2.22044604925031308084726333618164062e-16F64

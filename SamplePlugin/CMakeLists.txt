@@ -51,8 +51,8 @@ include_directories(${CMAKE_SOURCE_DIR}/src/)
 add_executable(hsvfilter src/hsvfilter.cpp )
 target_link_libraries(hsvfilter ${OpenCV_LIBS} ${HEADER_FILES} ${Eigen_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES} ${ROBWORK_LIBRARIES}) 
 
-add_executable(planning src/planning.cpp )
-target_link_libraries(planning ${OpenCV_LIBS} ${HEADER_FILES} ${Eigen_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES} ${ROBWORK_LIBRARIES} ${Qt6Core_LIBRARIES} ${Qt6Widgets_LIBRARIES} ${Qt6Charts_LIBRARIES}) 
+add_executable(stereo src/stereo.cpp )
+target_link_libraries(stereo ${OpenCV_LIBS} ${HEADER_FILES} ${Eigen_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES} ${ROBWORK_LIBRARIES} ${Qt6Core_LIBRARIES} ${Qt6Widgets_LIBRARIES} ${Qt6Charts_LIBRARIES}) 
 
 # The shared library to build:
 add_library(${PROJECT_NAME} MODULE src/SamplePlugin.cpp src/resources.qrc)

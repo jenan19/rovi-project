@@ -78,7 +78,7 @@ using rw::sensor::Image;
 #define MAXTIME 60.
 #define ESTEPSIZE 0.05
 #define EXTEND 0.1
-#define TRIALS 3
+#define TRIALS 5
 
 
 
@@ -107,82 +107,113 @@ bool checkCollisions(Device::Ptr device, const State &state, const CollisionDete
 TimedStatePath linInterp (SerialDevice::Ptr device, State state, vector<Transform3D<> > points, double duration, WorkCell::Ptr wc)
 {
     TimedStatePath res;
-    rw::invkin::ClosedFormIKSolverUR::Ptr closedFormSovler = rw::core::ownedPtr (new rw::invkin::ClosedFormIKSolverUR (device, state));
-    std::vector< Q > solutions;
-    // create Collision Detector
-    rw::proximity::CollisionDetector detector ( wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeDefaultCollisionStrategy ());
-
-    for (size_t i = 0; i < points.size() - 1; i++)
+    for (int index = 0; index < 50; index++)
     {
-        CartesianLinearInterpolator interp (points[i], points[i+1], duration);
-        
-        
-        for (double j = 0; j < duration; j += 0.05) {
+        res.clear();
+        vector<Vector3D<>> logging;
+        rw::invkin::ClosedFormIKSolverUR::Ptr closedFormSovler = rw::core::ownedPtr (new rw::invkin::ClosedFormIKSolverUR (device, state));
+        std::vector< Q > solutions;
+        // create Collision Detector
+        rw::proximity::CollisionDetector detector ( wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeDefaultCollisionStrategy ());
+
+        for (size_t i = 0; i < points.size() - 1; i++)
+        {
+            CartesianLinearInterpolator interp (points[i], points[i+1], duration);
             
+            
+            for (double j = 0; j < duration; j += 0.05) {
+                
+                logging.push_back(interp.x(j).P());
+                solutions = closedFormSovler->solve(interp.x (j), state );
+                for (unsigned int k = 0; k < solutions.size (); k++) {
+                    // set the robot in that configuration and check if it is in collision
+                    device->setQ ( solutions[k], state);
 
-            solutions = closedFormSovler->solve(interp.x (j), state );
-            for (unsigned int k = 0; k < solutions.size (); k++) {
-                // set the robot in that configuration and check if it is in collision
-                device->setQ ( solutions[k], state);
-
-                if (!detector.inCollision (state)) {
-                    res.push_back (TimedState (j, state));    // save it
-                    break;                        // we only need one
+                    if (!detector.inCollision (state)) {
+                        res.push_back (TimedState (j, state));    // save it
+                        break;                        // we only need one
+                    }
                 }
-            }
 
-            
+                
+            }
         }
+
+        ofstream coordOut("coords"+std::to_string(index)+".txt");
+        for (size_t g = 0; g < logging.size(); g++)
+        {
+            coordOut << logging.at(g)[0] << " , " << logging.at(g)[1] << " , " << logging.at(g)[2] << endl;
+        }
+
     }
 
     return res;
 }
 
 TimedStatePath paraInterp (SerialDevice::Ptr device, State state, vector<Transform3D<> > points, double duration, WorkCell::Ptr wc)
-{
+{   
     TimedStatePath res;
-    rw::invkin::ClosedFormIKSolverUR::Ptr closedFormSovler = rw::core::ownedPtr (new rw::invkin::ClosedFormIKSolverUR (device, state));
-    std::vector< Q > solutions;
-    // create Collision Detector
-    rw::proximity::CollisionDetector detector ( wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeDefaultCollisionStrategy ());
-    if (points.size() > 1)
+    for (int index = 0; index < 50; index++)
     {
-            InterpolatorTrajectory<Transform3D<> > traj;
-        for (size_t i = 0; i < points.size() - 2; i++)
+        vector<Vector3D<>> logging;
+        res.clear();
+        rw::invkin::ClosedFormIKSolverUR::Ptr closedFormSovler = rw::core::ownedPtr (new rw::invkin::ClosedFormIKSolverUR (device, state));
+        std::vector< Q > solutions;
+        // create Collision Detector
+        rw::proximity::CollisionDetector detector ( wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeDefaultCollisionStrategy ());
+        if (points.size() > 1)
         {
-            CartesianLinearInterpolator interp1 (points[i], points[i+1], duration);
-            CartesianLinearInterpolator interp2 (points[i+1], points[i+2], duration);
-            ParabolicBlend blend(interp1, interp2, duration/2);
-            if (i == 0)
-                traj.add(interp1);
-            
-            traj.add(blend,interp2);
-        }    
-        for (double j = 0; j <= traj.duration(); j += 0.05) {
-            
+                InterpolatorTrajectory<Transform3D<> > traj;
+            for (size_t i = 0; i < points.size() - 2; i++)
+            {
+                CartesianLinearInterpolator interp1 (points[i], points[i+1], duration);
+                CartesianLinearInterpolator interp2 (points[i+1], points[i+2], duration);
+                ParabolicBlend blend(interp1, interp2, duration/2);
+                if (i == 0)
+                    traj.add(interp1);
+                
+                traj.add(blend,interp2);
+            }    
+            for (double j = 0; j <= traj.duration(); j += 0.05) 
+            {
+                
+                logging.push_back(traj.x(j).P());
+                solutions = closedFormSovler->solve(traj.x(j), state );
+                for (unsigned int k = 0; k < solutions.size (); k++) 
+                {
+                    // set the robot in that configuration and check if it is in collision
+                    device->setQ ( solutions[k], state);
 
-            solutions = closedFormSovler->solve(traj.x(j), state );
-            for (unsigned int k = 0; k < solutions.size (); k++) {
-                // set the robot in that configuration and check if it is in collision
-                device->setQ ( solutions[k], state);
-
-                if (!detector.inCollision (state)) {
-                    res.push_back (TimedState (j, state));    // save it
-                    break;                        // we only need one
+                    if (!detector.inCollision (state)) 
+                    {
+                        res.push_back (TimedState (j, state));    // save it
+                        break;                        // we only need one
+                    }
                 }
-            }
 
+                
+            }
             
         }
-        
+        else
+        {
+            cout << "Error: Not enough points to interpolate between" << endl;
+
+        }
+
+        ofstream coordOut("coordsPB"+std::to_string(index)+".txt");
+        for (size_t g = 0; g < logging.size(); g++)
+        {
+            coordOut << logging.at(g)[0] << " , " << logging.at(g)[1] << " , " << logging.at(g)[2] << endl;
+        }
     }
-    else
-        cout << "Error: Not enough points to interpolate between" << endl;
 
 
     return res;
 }
+
 CollisionDetector::Ptr detector;
+
 void RRTconnect(string deviceName , State state, vector<Transform3D<> > points3D, WorkCell::Ptr wc)
 {
 
@@ -239,22 +270,21 @@ void RRTconnect(string deviceName , State state, vector<Transform3D<> > points3D
                     std::vector< Q > solutions = closedFormSovler->solve(points3D[j] , state);
                     
                     for (size_t i = 0; i < solutions.size (); i++) {
-                        // set the robot in that configuration and check if it is in collision
+                       
                         device->setQ (solutions[i], state);
                         if (!detector->inCollision (state)) {
-                            to.push_back(solutions[i]);    // save it
-                            break;                // we only need one
+                            to.push_back(solutions[i]);    
+                            break;               
                         }
                     }
                     if (to.size() == 0)
                         cout << "Frame " << j << " in collision" << endl;
                 }
 
-                //cout << to.size() << endl;
-                
+
                 device->setQ (to[0], state);
 
-                //Kinematics::gripFrame (bottle_frame, tool_frame, state);
+
                 CollisionDetector detector (wc,
                                             ProximityStrategyFactory::makeDefaultCollisionStrategy ());
                 PlannerConstraint constraint = PlannerConstraint::make (&detector, device, state);
@@ -272,7 +302,7 @@ void RRTconnect(string deviceName , State state, vector<Transform3D<> > points3D
 
 
                 TimedStatePath tStatePath;
-                // cout << "Planning from " << from << " to " << to << endl;
+
                 QPath path;
                 Timer t;
                 t.resetAndResume ();
@@ -286,8 +316,7 @@ void RRTconnect(string deviceName , State state, vector<Transform3D<> > points3D
 
                     t.pause ();
 
-                    // cout << "Path of length " << path.size() << " found in " << t.getTime() << "
-                    // seconds." << endl;
+
                     if (t.getTime () >= MAXTIME) 
                     {
                         cout << "\nNotice: max time of " << MAXTIME << " seconds reached." << endl;
@@ -302,27 +331,30 @@ void RRTconnect(string deviceName , State state, vector<Transform3D<> > points3D
                             distance += (q-last).norm2();
                         }
 
-                        //mydata << t.getTime () << "\t" << distance << "\t" << extend << "\t" << path.size () << "\n";
-
                         double time = 0.0;
                         
-                        for (size_t i = 0; i < path.size (); i += 0.05) 
+                        for (size_t i = 0; i < path.size (); i += 1) 
                         {
                             device->setQ (path.at (i), state);
                             
                             logging.push_back((device->baseTframe(toolFrame, state) * transformWU).P());
                             tStatePath.push_back (TimedState (time, state));
-                            time += i;
+                            time += 10 / double(path.size() + 1);
                         }
 
                     }
                 }
-                cout << "x: " << logging.at(0)[0] << " y: " << logging.at(0)[1] << " z: " <<  logging.at(0)[2] << endl;
-                ofstream coordOut("coords"+std::to_string(index)+".txt");
-                for (size_t g = 0; g < logging.size(); g++)
+                
+                if (logging.size() > 0)
                 {
-                    coordOut << logging.at(g)[0] << " , " << logging.at(g)[1] << " , " << logging.at(g)[2] << endl;
+                    cout << "x: " << logging.at(0)[0] << " y: " << logging.at(0)[1] << " z: " <<  logging.at(0)[2] << endl;
+                    ofstream coordOut("coords"+std::to_string(index)+".txt");
+                    for (size_t g = 0; g < logging.size(); g++)
+                    {
+                        coordOut << logging.at(g)[0] << " , " << logging.at(g)[1] << " , " << logging.at(g)[2] << endl;
+                    }
                 }
+
                 rw::loaders::PathLoader::storeTimedStatePath (*wc, tStatePath, "visuRRTConnect"+std::to_string(index++)+".rwplay");
             }
 
@@ -384,6 +416,7 @@ int main(int argc, char** argv)
         cerr << "Device: " << "WORLD" << " not found!" << endl;
         return 0;
     }
+
     Frame* URFrame = wc->findFrame("URReference");
     if (URFrame == NULL)
     {
@@ -491,34 +524,14 @@ int main(int argc, char** argv)
     Mat coord = stereo.everythingVision(imgLeft, imgRight, calibrationFile);
 
 
-    /*
 
-    State stateInv = wcObstacle->getDefaultState ();
-    rw::invkin::ClosedFormIKSolverUR::Ptr closedFormSovlerRRT = rw::core::ownedPtr (new rw::invkin::ClosedFormIKSolverUR (robotUR5, stateInv));
-    rw::proximity::CollisionDetector detector ( wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeDefaultCollisionStrategy ());
-    std::vector< Q > solutions;
-    std::vector< Q > pointsQ;
-
-
-    for (size_t i = 0; i < points3d.size(); i++)
-    {
-        solutions = closedFormSovlerRRT->solve(points3d[i], stateInv );
-        for (unsigned int k = 0; k < solutions.size (); k++) {
-            robotUR5->setQ ( solutions[k], stateInv);
-            if (!detector.inCollision (stateInv)) 
-            {
-                pointsQ.push_back(solutions[k]);    // save it
-                break;                        // we only need one
-            }
-        }
-    }
-    */
 
     vector<Transform3D<> > points3d;
     vector< Q > pointsQ;
 
 
     Transform3D<>  transformUW = Kinematics::frameTframe (URFrame, WORLD, wc->getDefaultState());
+
     Transform3D<>  transformTT = Kinematics::frameTframe (toolFrame, URTCPFrame, wc->getDefaultState());
 
 
@@ -532,7 +545,13 @@ int main(int argc, char** argv)
     points3d.push_back( transformUW * Transform3D(Vector3Dd(coord.at<double>(0), coord.at<double>(1) , coord.at<double>(2) ), RPY( 0.01, 0.01, 3.14))  * transformTT); //detected object pick
     //points3d.push_back( transformUW * Transform3D(Vector3Dd(coord.at<double>(0), coord.at<double>(1), coord.at<double>(2) + 0.20),RPY( 0.01, 0.01, 3.14))  * transformTT  ); //detected object above
 
-    cout << coord.at<double>(0) << " " <<  coord.at<double>(1) << " " <<  coord.at<double>(2) << endl;
+    //cout << coord.at<double>(0) << " " <<  coord.at<double>(1) << " " <<  coord.at<double>(2) << endl;
+
+    //points3d.push_back(transformUW *  Transform3D(Vector3Dd(0, 0.474, 0.2),RPY( 0.01, 0.01, 3.14).toRotation3D()) * transformTT); //pick point
+    //points3d.push_back(transformUW *  Transform3D(Vector3Dd(0.2, 0.474, 0.1),RPY( 0.01, 0.01, 3.14).toRotation3D()) * transformTT); //pick point
+    //points3d.push_back(transformUW *  Transform3D(Vector3Dd(0.2, 0.474, 0.2),RPY( 0.01, 0.01, 3.14).toRotation3D()) * transformTT); //pick point
+
+    //points3d.push_back(transformUW *  Transform3D(Vector3Dd(0.5, 0.474, 0.2),RPY( 0.01, 0.01, 3.14).toRotation3D()) * transformTT); //pick point
 /*
     points3d.push_back(Transform3D(Vector3Dd(0.00, 0.474, 0.430),RPY( 0.01, 0.01, 3.14).toRotation3D()) ); //Bottle above
     points3d.push_back(Transform3D(Vector3Dd(0.00, 0.474, 0.300),RPY( 0.01, 0.01, 3.14).toRotation3D()) ); //Bottle pick
@@ -540,10 +559,10 @@ int main(int argc, char** argv)
     //points3d.push_back(transformUW * Transform3D(Vector3Dd(-0.250, 0.474, 0.300),RPY( 0.01, 0.01, 3.14))    ); //Cylinder above
     //points3d.push_back(transformUW * Transform3D(Vector3Dd(-0.250, 0.474, 0.225),RPY( 0.01, 0.01, 3.14))   ); //Cylinder pick
 
-    points3d.push_back( transformUW * Transform3D(Vector3Dd(0.290, -0.5, 0.2),RPY( 0.01, 0.01, 3.14))  * transformTT  ); //Place - goal
+    points3d.push_back( transformUW * Transform3D(Vector3Dd(0.290, -0.5, 0.2),RPY( 0.01, 0.01, 3.14)) * transformTT); //Place - goal
 
 
-    
+/*
 
     pointsQ.push_back( Q(1.289, -1.837, -1.92, -0.959, 1.58, -0.292));//Cylinder pick
     pointsQ.push_back( Q(1.289, -1.689, -1.681, -1.347, 1.58, -0.292)); //Cylinder above
@@ -556,13 +575,17 @@ int main(int argc, char** argv)
 
     pointsQ.push_back( Q(-0.837, -1.791, -1.694, -1.234, 1.562, -2.417)); //Place
 
+*/
 
 
-    TimedStatePath linearMotion = linInterp (robotUR5, wc->getDefaultState (), points3d, 5, wc);
-    PathLoader::storeTimedStatePath (*wc, linearMotion, "./visu.rwplay");
+       // TimedStatePath linearMotion = linInterp (robotUR5, wc->getDefaultState (), points3d, 2, wc);
 
-    TimedStatePath linearParabolicMotion = paraInterp (robotUR5, wc->getDefaultState (), points3d, 5, wc);
-    PathLoader::storeTimedStatePath (*wc, linearParabolicMotion, "./visuPB.rwplay");
+        //PathLoader::storeTimedStatePath (*wc, linearMotion, "./visu"+to_string(index)+".rwplay");
+
+       // TimedStatePath linearParabolicMotion = paraInterp (robotUR5, wc->getDefaultState (), points3d, 2, wc);
+        //PathLoader::storeTimedStatePath (*wc, linearParabolicMotion, "./visuPB"+to_string(index)+".rwplay");
+
+
 
 
 

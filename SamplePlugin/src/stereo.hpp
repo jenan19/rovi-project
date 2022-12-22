@@ -53,12 +53,6 @@ class Stereo
 
         cv::Mat constructProjectionMat(Camera cam);
 
-        std::array<cv::Mat, 2> splitPp(cv::Mat proj);
-
-
-        cv::Mat computeOpticalCenter(std::array<cv::Mat, 2> Pp);
-
-        cv::Mat computeFundamentalMat(cv::Mat e, cv::Mat proj_r, cv::Mat proj_l);
 
 
     public:

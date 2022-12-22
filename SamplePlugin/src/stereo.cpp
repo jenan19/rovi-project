@@ -104,36 +104,9 @@ cv::Mat Stereo::constructProjectionMat(Camera cam)
     return KA * H;
 }
 
-std::array<cv::Mat, 2> Stereo::splitPp(cv::Mat proj)
-{
-    std::array<cv::Mat, 2> Pp;
-    Pp[0] = proj(cv::Range(0, 3), cv::Range(0, 3));
-    Pp[1] = proj(cv::Range(0, 3), cv::Range(3, 4));
-    return Pp;
-}
 
-cv::Mat Stereo::computeOpticalCenter(std::array<cv::Mat, 2> Pp)
-{
-    // Compute in homogeneous coordiantes
-    cv::Mat one = cv::Mat::ones(1, 1, CV_64F);
-    cv::Mat C = -1.0 * Pp[0].inv(cv::DECOMP_SVD) * Pp[1];
-    cv::vconcat(C, one, C);
-    return C;
-}
 
-cv::Mat Stereo::computeFundamentalMat(cv::Mat e, cv::Mat proj_r, cv::Mat proj_l)
-{
-    // Create symmetric skew 'cross product matrix' from the right epipole
-    cv::Mat erx = cv::Mat::zeros(3, 3, CV_64F);
-    erx.at<double>(0, 1) = -e.at<double>(2);
-    erx.at<double>(0, 2) = e.at<double>(1);
-    erx.at<double>(1, 0) = e.at<double>(2);
-    erx.at<double>(1, 2) = -e.at<double>(0);
-    erx.at<double>(2, 0) = -e.at<double>(1);
-    erx.at<double>(2, 1) = e.at<double>(0);
 
-    return erx * proj_r * proj_l.inv(cv::DECOMP_SVD);
-}
 
 
 Mat Stereo::everythingVision(Mat pictureLeft, Mat pictureRight, string calibrationFile)
@@ -156,14 +129,15 @@ Mat Stereo::everythingVision(Mat pictureLeft, Mat pictureRight, string calibrati
 
     //Box and cylinder HSV values
     int lowH, highH, lowS, highS, lowV, highV;
-    lowH = 0; highH = 0; lowS = 0; highS = 1; lowV = 41; highV = 200;
+    lowH = 0; highH = 200; lowS = 0; highS = 200; lowV = 30; highV = 200;
 
     //Left
     cvtColor(houghL, hsvL, COLOR_BGR2HSV);
     // Detect the object based on HSV Range Values
     inRange(hsvL, Scalar(lowH, lowS, lowV), Scalar(highH, highS, highV), hsv_thresholded_imageL);
 
-
+    imshow("test", hsv_thresholded_imageL);
+    //waitKey(0);
 
     //Right
     cvtColor(houghR, hsvR, COLOR_BGR2HSV);
@@ -190,7 +164,7 @@ Mat Stereo::everythingVision(Mat pictureLeft, Mat pictureRight, string calibrati
     for( size_t i = 0; i < circlesL.size(); i++ )
     {
         Vec3i c = circlesL[i];
-        if (c[1] > 200)
+        if (c[1] > 200 && c[1] < 304)
         {
         centerL = Point(c[0], c[1]);
         //cout << "centerL : " << centerL.x << " , " << centerL.y << endl; 
@@ -219,7 +193,7 @@ Mat Stereo::everythingVision(Mat pictureLeft, Mat pictureRight, string calibrati
     for( size_t i = 0; i < circlesR.size(); i++ )
     {
         Vec3i c = circlesR[i];
-        if (c[1] > 200)
+        if (c[1] > 200 && c[1] < 304)
         {
             centerR = Point(c[0], c[1]);
             circle( houghR, centerR, 1, Scalar(0,100,100), 3, LINE_AA);
@@ -237,23 +211,12 @@ Mat Stereo::everythingVision(Mat pictureLeft, Mat pictureRight, string calibrati
     auto proj_l = constructProjectionMat(stereoPair.cam1);
     auto proj_r = constructProjectionMat(stereoPair.cam2);
 
-    auto Pp_l = splitPp(proj_l);
-    auto Pp_r = splitPp(proj_r);
-
-    auto C_l = computeOpticalCenter(Pp_l);
-    auto C_r = computeOpticalCenter(Pp_r);
-
-    cv::Mat e_l = proj_l * C_r;
-    cv::Mat e_r = proj_r * C_l;
-
-    auto F_lr = computeFundamentalMat(e_r, proj_r, proj_l);
 
     cv::Mat m_l(3, 1, CV_64F);
     m_l.at<double>(0, 0) = centerL.x;
     m_l.at<double>(1, 0) = centerL.y;
     m_l.at<double>(2, 0) = 1;
 
-    cv::Mat e_line_r = F_lr * m_l;
 
     cv::Mat m_r(3, 1, CV_64F);
     m_r.at<double>(0, 0) = centerR.x;
@@ -278,22 +241,45 @@ Mat Stereo::everythingVision(Mat pictureLeft, Mat pictureRight, string calibrati
 
 }
 
-/*
+
 
 int main(int argc, const char** argv) 
 {
 
-    Mat img_l = imread("../pictures/Camera_Left.png");
-    Mat img_r = imread("../pictures/Camera_Right.png");
+
+    Stereo stereo;
+    Mat img_l = imread("../pictures/-0204Camera_Left.png");
+    Mat img_r = imread("../pictures/-0204Camera_Right.png");
     string calibrationFile = "../calibration.txt";
 
 
-    cv::Mat pnts3D(1, 1, CV_64FC4);
+    Mat imgL = img_l.clone(), imgR = img_r.clone();
 
-    pnts3D = everythingVision(img_l, img_r, calibrationFile);
+    imgL = img_l.clone(), imgR = img_r.clone();
+    vector<double> sigma = {50, 50, 50};
+
+    vector<double>  mean = {0, 0, 0};
+    Mat noisel(imgL.size(),imgL.type());
+
+    randn(noisel, mean, sigma);
+    imgL += noisel;
+
+    imshow("test",imgL);
+    waitKey(0);
+
+    Mat noiser(imgR.size(),imgR.type());
+
+    randn(noiser, mean, sigma);
+    imgR += noiser;
+
+
+    Mat pnts3D(1, 1, CV_64FC4);
+    pnts3D = stereo.everythingVision(imgL, imgR, calibrationFile);
+
+
+    cout << pnts3D.at<double>(0) << " " << pnts3D.at<double>(1) << "  " << pnts3D.at<double>(2) << endl;
 
     
 
     return 0;
 }
-*/

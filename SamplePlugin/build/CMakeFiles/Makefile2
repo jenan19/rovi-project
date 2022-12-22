@@ -64,7 +64,7 @@ CMAKE_BINARY_DIR = /home/peterhye/roviexercises/RoViProject/SamplePlugin/build
 
 # The main recursive "all" target.
 all: CMakeFiles/hsvfilter.dir/all
-all: CMakeFiles/planning.dir/all
+all: CMakeFiles/stereo.dir/all
 all: CMakeFiles/RoViPlugin.dir/all
 .PHONY : all
 
@@ -74,10 +74,10 @@ preinstall:
 
 # The main recursive "clean" target.
 clean: CMakeFiles/hsvfilter.dir/clean
-clean: CMakeFiles/planning.dir/clean
+clean: CMakeFiles/stereo.dir/clean
 clean: CMakeFiles/RoViPlugin.dir/clean
 clean: CMakeFiles/hsvfilter_autogen.dir/clean
-clean: CMakeFiles/planning_autogen.dir/clean
+clean: CMakeFiles/stereo_autogen.dir/clean
 clean: CMakeFiles/RoViPlugin_autogen.dir/clean
 .PHONY : clean
 
@@ -108,30 +108,30 @@ CMakeFiles/hsvfilter.dir/clean:
 .PHONY : CMakeFiles/hsvfilter.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/planning.dir
+# Target rules for target CMakeFiles/stereo.dir
 
 # All Build rule for target.
-CMakeFiles/planning.dir/all: CMakeFiles/planning_autogen.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/planning.dir/build.make CMakeFiles/planning.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/planning.dir/build.make CMakeFiles/planning.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles --progress-num=11,12,13 "Built target planning"
-.PHONY : CMakeFiles/planning.dir/all
+CMakeFiles/stereo.dir/all: CMakeFiles/stereo_autogen.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stereo.dir/build.make CMakeFiles/stereo.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stereo.dir/build.make CMakeFiles/stereo.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles --progress-num=11,12,13 "Built target stereo"
+.PHONY : CMakeFiles/stereo.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/planning.dir/rule: cmake_check_build_system
+CMakeFiles/stereo.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles 4
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/planning.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/stereo.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles 0
-.PHONY : CMakeFiles/planning.dir/rule
+.PHONY : CMakeFiles/stereo.dir/rule
 
 # Convenience name for target.
-planning: CMakeFiles/planning.dir/rule
-.PHONY : planning
+stereo: CMakeFiles/stereo.dir/rule
+.PHONY : stereo
 
 # clean rule for target.
-CMakeFiles/planning.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/planning.dir/build.make CMakeFiles/planning.dir/clean
-.PHONY : CMakeFiles/planning.dir/clean
+CMakeFiles/stereo.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stereo.dir/build.make CMakeFiles/stereo.dir/clean
+.PHONY : CMakeFiles/stereo.dir/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/RoViPlugin.dir
@@ -186,30 +186,30 @@ CMakeFiles/hsvfilter_autogen.dir/clean:
 .PHONY : CMakeFiles/hsvfilter_autogen.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/planning_autogen.dir
+# Target rules for target CMakeFiles/stereo_autogen.dir
 
 # All Build rule for target.
-CMakeFiles/planning_autogen.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/planning_autogen.dir/build.make CMakeFiles/planning_autogen.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/planning_autogen.dir/build.make CMakeFiles/planning_autogen.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles --progress-num=14 "Built target planning_autogen"
-.PHONY : CMakeFiles/planning_autogen.dir/all
+CMakeFiles/stereo_autogen.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stereo_autogen.dir/build.make CMakeFiles/stereo_autogen.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stereo_autogen.dir/build.make CMakeFiles/stereo_autogen.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles --progress-num=14 "Built target stereo_autogen"
+.PHONY : CMakeFiles/stereo_autogen.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/planning_autogen.dir/rule: cmake_check_build_system
+CMakeFiles/stereo_autogen.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles 1
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/planning_autogen.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/stereo_autogen.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/peterhye/roviexercises/RoViProject/SamplePlugin/build/CMakeFiles 0
-.PHONY : CMakeFiles/planning_autogen.dir/rule
+.PHONY : CMakeFiles/stereo_autogen.dir/rule
 
 # Convenience name for target.
-planning_autogen: CMakeFiles/planning_autogen.dir/rule
-.PHONY : planning_autogen
+stereo_autogen: CMakeFiles/stereo_autogen.dir/rule
+.PHONY : stereo_autogen
 
 # clean rule for target.
-CMakeFiles/planning_autogen.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/planning_autogen.dir/build.make CMakeFiles/planning_autogen.dir/clean
-.PHONY : CMakeFiles/planning_autogen.dir/clean
+CMakeFiles/stereo_autogen.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stereo_autogen.dir/build.make CMakeFiles/stereo_autogen.dir/clean
+.PHONY : CMakeFiles/stereo_autogen.dir/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/RoViPlugin_autogen.dir

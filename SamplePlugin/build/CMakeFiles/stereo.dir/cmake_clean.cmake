@@ -6,8 +6,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/stereo.dir/src/stereo.cpp.o.d"
   "CMakeFiles/stereo.dir/stereo_autogen/mocs_compilation.cpp.o"
   "CMakeFiles/stereo.dir/stereo_autogen/mocs_compilation.cpp.o.d"
-  "libstereo.pdb"
-  "libstereo.so"
+  "stereo"
+  "stereo.pdb"
 )
 
 # Per-language clean rules from dependency scanning.
