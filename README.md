@@ -17,7 +17,7 @@ run ./reachabilityAnalysis
 ## To run m2 vision
 run M2_simulated_depth_sensor.py
 
-##File locations
+## File locations
 
 The reachability analysis can be found in the src/ folder in the root directory. The algorithm was implemented as a class in the following files: reachabilityAnalyzer.hpp, reachabilityAnalyzer.cpp and reachabilityAnalysis.cpp (contains the main loop).
 
