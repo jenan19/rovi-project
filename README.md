@@ -15,7 +15,7 @@ run ./reachabilityAnalysis
 
 
 ## To run m2 vision
-run M2_simoulated_depth_sensor.py
+run M2_simulated_depth_sensor.py
 
 ##File locations
 
