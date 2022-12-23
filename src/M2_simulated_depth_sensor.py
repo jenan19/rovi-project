@@ -149,7 +149,6 @@ def find_object(scene, obj_global) :
 
 
 
-    rmse = tepp.compute_rmse(obj_global_temp, scene, corr)
     
 
     # Print pose
@@ -179,7 +178,7 @@ def main():
     ###o3d.visualization.draw_geometries([mesh])
     ##o3d.visualization.draw_geometries([pointcloud])
 
-    pcd_path = "PointClouds/Scanner25D(x-02_y04).pcd"
+    pcd_path = "PointClogit pushuds/Scanner25D(x-02_y04).pcd"
 
     #scene = o3d.io.read_point_cloud("PointClouds/Scanner25D.pcd")
     ## init models
@@ -190,16 +189,16 @@ def main():
 
 
 
-    scene = apply_noise(pcd = o3d.io.read_point_cloud(pcd_path), mu =  0, sigma = 0.01)
+    ##scene = apply_noise(pcd = o3d.io.read_point_cloud(pcd_path), mu =  0, sigma = 0.01)
     ##rmse = find_object(scene=scene, obj_global=obj)
     
-    o3d.visualization.draw_geometries([scene, obj])
+    ##o3d.visualization.draw_geometries([scene, obj])
 
 
 
 
 
-    """
+    
     x = 0.2
     y = 0.4
     z = 0.21
@@ -212,13 +211,13 @@ def main():
             #obj_global = pointcloud; #= o3d.io.read_point_cloud("PointClouds/object-global.pcd")
             
             scene = apply_noise(pcd = o3d.io.read_point_cloud(pcd_path), mu =  0, sigma = sigma[j])
-            rmse = find_object(scene=scene, obj_global=obj)
+            xyz = find_object(scene=scene, obj_global=obj)
     
-            file.write(str(rmse[0]) + ';' + str(rmse[1]) + ';' + str(rmse[2]) + ';' + '\n')
+            file.write(str(xyz[0]) + ';' + str(xyz[1]) + ';' + str(xyz[2]) + ';' + '\n')
 
 
             
-            print(str(i) + ":   " + str(rmse[0]) + ';' + str(rmse[1]) + ';' + str(rmse[2]) + ';' + '\n')
+            print(str(i) + ":   " + str(xyz[0]) + ';' + str(xyz[1]) + ';' + str(xyz[2]) + ';' + '\n')
             
         file.write('\n')
    
